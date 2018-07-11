@@ -6,6 +6,10 @@ Fixes:
 * Fix Iron casting recipe unlock with Advanced Cast Iron Making
 * Add Iron plate from Iron casting recipe, unlocked with Advanced Cast Iron Making
 * Fix reversed ingredients for steam-turbine and steam-turbine-2
+* Unlock early hand-sorted nickel production (0.2.0)
+* Temporary fix for remaining references to old ore types (0.2.0)
+* Temporary fix for remaining references to XM plates (0.2.0)
+* Fix Boron Processing recipe unlock (0.2.0)
 
 Consistency changes:
 

@@ -50,6 +50,36 @@ local st1 = data.raw.recipe["steam-turbine"]
 local st2 = data.raw.recipe["steam-turbine-2"]
 st1.ingredients, st2.ingredients = st2.ingredients, st1.ingredients
 
+--update ingredient references
+local ingredient_updates = {
+  ["apatite"] = "phosphorite",
+  ["bauxite"] = "laterite",
+  ["granitic-ore"] = "skarn",
+  ["heavy-sand"] = "sand",
+  ["lead-ore"] = "massive-sulfide",
+  ["sulfidic-ore"] = "igneous-sulfide",
+
+  ["lead-plate"] = "lead-ingot",
+  ["tin-plate"] = "tin-ingot",
+}
+for name in pairs(ingredient_updates) do
+  data.raw.item[name] = nil
+end
+for _, recipe in pairs(data.raw.recipe) do
+  local ingredients = recipe.ingredients or recipe.normal.ingredients or recipe.expensive.ingredients
+  for _, ingredient in ipairs(ingredients) do
+    if ingredient_updates[ingredient[1]] then
+      ingredient[1] = ingredient_updates[ingredient[1]]
+    end
+  end
+end
+
+-- fix early nickel accessibility
+data.raw.technology["nickel-smelting"].effects[1] = {type="unlock-recipe",recipe="hand-garnierite"}
+
+-- fix borax availability
+data.raw.technology["boron-processing"].effects[1] = {type="unlock-recipe",recipe="borax"}
+
 --data.raw.technology["brick-clay"].effects[1].recipe = "brick-clay-b"
 if data.raw.technology["radar-amplifier"] then
   data.raw.technology["radar-amplifier"].prerequisites[2] = nil
