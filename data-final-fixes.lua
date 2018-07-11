@@ -265,5 +265,3 @@ for name, status in pairs(recipe_status) do
     end
   end
 end
-log(crafted_by)
-error("done")

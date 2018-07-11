@@ -66,10 +66,20 @@ for name in pairs(ingredient_updates) do
   data.raw.item[name] = nil
 end
 for _, recipe in pairs(data.raw.recipe) do
-  local ingredients = recipe.ingredients or recipe.normal.ingredients or recipe.expensive.ingredients
-  for _, ingredient in ipairs(ingredients) do
-    if ingredient_updates[ingredient[1]] then
-      ingredient[1] = ingredient_updates[ingredient[1]]
+  if recipe.name == "battery" then log(serpent.block(recipe)) end
+  for _, recipe_root in ipairs{recipe, recipe.normal, recipe.expensive} do
+    if recipe_root then
+      for _, item_list in ipairs{recipe_root.ingredients, recipe_root.results} do
+        if item_list then
+          for _, stack in ipairs(item_list) do
+            if stack.name and ingredient_updates[stack.name] then
+              stack.name = ingredient_updates[stack.name]
+            elseif stack[1] and ingredient_updates[stack[1]] then
+              stack[1] = ingredient_updates[stack[1]]
+            end
+          end
+        end
+      end
     end
   end
 end
