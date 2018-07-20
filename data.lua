@@ -9,13 +9,6 @@ for _, category in pairs(data.raw) do
   end
 end
 
--- remove chemical-burner
-data.raw.inserter["inserter-chemical-burner"] = nil
-data.raw.recipe["inserter-chemical-burner"] = nil
-data.raw.item["inserter-chemical-burner"] = nil
-data.raw.recipe["recycle-inserter-chemical-burner"] = nil
-data.raw.technology["iron-recycling"].effects[5] = nil
-
 data.raw.recipe["wood"].category = "basic-machine"
 
 -- relays, vacuum tubes, quartz oscillators are assembled, not machined
@@ -25,7 +18,8 @@ data.raw.recipe["components-2-a"].category = "crafting"
 data.raw.recipe["components-2-b"].category = "crafting"
 data.raw.recipe["components-3"].category = "advanced-crafting"
 
-table.insert(data.raw.technology["lead-brass"].effects, {type = "unlock-recipe", recipe = "components-1-b"})
+data.raw.recipe["components-1-b"].ingredients[2][1] = "gear-3"
+table.insert(data.raw.technology["automation"].effects, {type = "unlock-recipe", recipe = "components-1-b"})
 
 data:extend{
 --XM Iron Plate from Forging
@@ -46,27 +40,20 @@ data.raw.technology["forging-iron"].effects[3] = {
   recipe = "iron-plate-c",
 }
 
+-- fix steam-turbine ingredients
 local st1 = data.raw.recipe["steam-turbine"]
-local st2 = data.raw.recipe["steam-turbine-2"]
-st1.ingredients, st2.ingredients = st2.ingredients, st1.ingredients
+if st1.ingredients[1][1] == "forging-superalloy" then
+  local st2 = data.raw.recipe["steam-turbine-2"]
+  st1.ingredients, st2.ingredients = st2.ingredients, st1.ingredients
+end
 
 --update ingredient references
 local ingredient_updates = {
-  ["apatite"] = "phosphorite",
-  ["bauxite"] = "laterite",
-  ["granitic-ore"] = "skarn",
-  ["heavy-sand"] = "sand",
-  ["lead-ore"] = "massive-sulfide",
-  ["sulfidic-ore"] = "igneous-sulfide",
-
-  ["lead-plate"] = "lead-ingot",
-  ["tin-plate"] = "tin-ingot",
 }
 for name in pairs(ingredient_updates) do
   data.raw.item[name] = nil
 end
 for _, recipe in pairs(data.raw.recipe) do
-  if recipe.name == "battery" then log(serpent.block(recipe)) end
   for _, recipe_root in ipairs{recipe, recipe.normal, recipe.expensive} do
     if recipe_root then
       for _, item_list in ipairs{recipe_root.ingredients, recipe_root.results} do
@@ -90,7 +77,11 @@ data.raw.technology["nickel-smelting"].effects[1] = {type="unlock-recipe",recipe
 -- fix borax availability
 data.raw.technology["boron-processing"].effects[1] = {type="unlock-recipe",recipe="borax"}
 
---data.raw.technology["brick-clay"].effects[1].recipe = "brick-clay-b"
+-- unlock milled-bauxite for concrete
+if data.raw.recipe["milled-bauxite"] then
+  data.raw.technology["bauxite-sediment"].effects[2].recipe = "milled-bauxite"
+end
+
 if data.raw.technology["radar-amplifier"] then
   data.raw.technology["radar-amplifier"].prerequisites[2] = nil
 end
